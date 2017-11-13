@@ -9,6 +9,9 @@ public:
 	int getIsDrawing() { return isDrawing; }
 	void setIsDrawing(bool tf) { isDrawing = tf; }
 
+	int getID() { return id; }
+	
 private:
 	bool isDrawing;
+	int id = 2;
 };

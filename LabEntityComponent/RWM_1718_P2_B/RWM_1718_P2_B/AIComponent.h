@@ -13,8 +13,11 @@ public:
 	bool getIsWalking() { return isWalking; }
 	void setIsWalking(bool tf) { isWalking = tf; }
 
+	int getID() { return id; }
+	
 private:
 	bool isIdle;
 	bool isHostile;
 	bool isWalking;
+	int id = 1;
 };

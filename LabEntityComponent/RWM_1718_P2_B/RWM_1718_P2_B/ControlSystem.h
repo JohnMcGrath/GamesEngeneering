@@ -14,6 +14,7 @@ public:
 		for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 		{
 			std::cout << "Run through control components" << std::endl;
+			
 		}
 	}
 };
