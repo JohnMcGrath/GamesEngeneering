@@ -1,19 +1,19 @@
 #pragma once
-#include "Component.h"
+#include "Entity.h"
 
-class ControlComponent : public Component
+class ControlSystem
 {
+	std::vector<Entity*> entities;
+
 public:
-	ControlComponent() { std::cout << "Control System Created" << std::endl; }
+	void addEntity(Entity* e) { entities.push_back(e); }
+	void update() 
+	{
+		std::cout << "ControlSystem Update" << std::endl;
 
-	int getXPos() { return m_xPos; }
-	void setXPos(int x) { m_xPos = x; }
-
-	int getYPos() { return m_yPos; }
-	void setYPos(int y) { m_yPos = y; }
-
-private:
-	int m_xPos = 100;
-	int m_yPos = 50;
+		for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+		{
+			std::cout << "Run through control components" << std::endl;
+		}
+	}
 };
-

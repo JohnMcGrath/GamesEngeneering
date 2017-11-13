@@ -1,14 +1,18 @@
 #pragma once
-#include "Component.h"
+#include "Entity.h"
 
-class RenderComponent : public Component
+class RenderSystem
 {
+	std::vector<Entity*> entities;
+
 public:
-	RenderComponent() { std::cout << "Render System Created" << std::endl; }
+	void addEntity(Entity* e) { entities.push_back(e); }
+	void update() {
+		std::cout << "RenderSystem Update" << std::endl;
 
-	int getIsDrawing() { return isDrawing; }
-	void setIsDrawing(bool tf) { isDrawing = tf; }
-
-private:
-	bool isDrawing;
+		for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+		{
+			std::cout << "Run through render components" << std::endl;
+		}
+	}
 };

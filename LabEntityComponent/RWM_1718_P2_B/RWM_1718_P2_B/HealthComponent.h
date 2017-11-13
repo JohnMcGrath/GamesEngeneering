@@ -4,7 +4,7 @@
 class HealthComponent : public Component
 {
 public:
-	HealthComponent() { std::cout << "Health System Created" << std::endl; }
+	HealthComponent() { std::cout << "Health Component Created" << std::endl; }
 
 	int getHealth() { return m_health; }
 	void setHealth(int health) { m_health = health; }

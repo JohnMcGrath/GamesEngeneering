@@ -155,11 +155,14 @@
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AIComponent.h" />
+    <ClInclude Include="AISystem.h" />
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="BasicTypes.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Contact.h" />
+    <ClInclude Include="ControlComponent.h" />
     <ClInclude Include="ControlSystem.h" />
     <ClInclude Include="Emitter.h" />
     <ClInclude Include="Entity.h" />
@@ -172,6 +175,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="RenderSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
