@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include "Component.h"
 
 class RenderSystem
 {
@@ -7,12 +8,24 @@ class RenderSystem
 
 public:
 	void addEntity(Entity* e) { entities.push_back(e); }
-	void update() {
+	void update()
+	{
+		std::cout << "" << std::endl;
 		std::cout << "RenderSystem Update" << std::endl;
 
 		for (std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
 		{
-			std::cout << "Run through render components" << std::endl;
+			std::cout << "Run Through Render Entities" << std::endl;
+
+			std::vector<Component*> tempVec = (*it)->getComponents();
+
+			for (std::vector<Component*>::iterator tempIt = tempVec.begin(); tempIt != tempVec.end(); ++tempIt)
+			{
+				if ((*tempIt)->getID() == 2)
+				{
+					std::cout << "Render Component Update" << std::endl;
+				}
+			}
 		}
 	}
 };

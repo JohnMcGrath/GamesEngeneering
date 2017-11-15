@@ -16,6 +16,7 @@ public:
 		for (std::vector<Component*>::iterator it = components.begin(); it != components.end(); ++it)
 		{
 			//if the id equals the past one
+			(*it)->getID();
 		}
 	}
 	std::vector<Component*> getComponents() { return components; }

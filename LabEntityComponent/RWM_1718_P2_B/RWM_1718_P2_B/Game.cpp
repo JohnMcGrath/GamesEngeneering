@@ -29,7 +29,6 @@ Game::Game()
 	renderSystem = new RenderSystem();
 
 	healthComponent = new HealthComponent();
-	aiComponent = new AIComponent();
 	controlComponent = new ControlComponent();
 	renderComponent = new RenderComponent();
 

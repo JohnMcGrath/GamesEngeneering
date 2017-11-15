@@ -9,5 +9,6 @@ public:
 	void addEntity(Entity* e) { entities.push_back(e); }
 	void update() {
 		std::cout << "HealthSystem Update" << std::endl;
+
 	}
 };
