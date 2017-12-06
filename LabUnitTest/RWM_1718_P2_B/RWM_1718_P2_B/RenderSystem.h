@@ -7,7 +7,9 @@ class RenderSystem
 	std::vector<Entity*> entities;
 
 public:
+	bool foundComponent = false;
 	void addEntity(Entity* e) { entities.push_back(e); }
+	bool getfoundComponent() { return foundComponent; }
 	void update()
 	{
 		std::cout << "" << std::endl;
@@ -24,8 +26,10 @@ public:
 				if ((*tempIt)->getID() == 2)
 				{
 					std::cout << "Render Component Update" << std::endl;
+					foundComponent = true;
 				}
 			}
+
 		}
 	}
 };
