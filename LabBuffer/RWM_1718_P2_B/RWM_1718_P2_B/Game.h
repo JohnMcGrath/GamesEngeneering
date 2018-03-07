@@ -24,11 +24,11 @@
 #include "ControlSystem.h"
 
 #include "HealthSystem.h"
+#include <thread>
 
-struct item
-{
-	int id = 1;
-};
+
+
+
 
 /** The game objct whic manages the game loop*/
 class Game:public EventListener
@@ -45,17 +45,9 @@ class Game:public EventListener
 	bool gameRunning = true;
 	bool musicPlaying = false;
 
-	void Producer();
-	void Consumer();
+	
 
-	std::vector<int> buffer;
-
-	int front = 0, rear = 0;
-
-	SDL_sem * empty = SDL_CreateSemaphore(buffer.capacity());
-	SDL_sem * full = SDL_CreateSemaphore(0);
-
-	item * protoItem;
+	
 
 public:
 	Game();

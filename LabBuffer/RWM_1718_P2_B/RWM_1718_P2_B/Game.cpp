@@ -10,6 +10,7 @@ using namespace std;
 #include "Box2D\Box2D.h"
 #include "Menu.h"
 
+
 const int SCREEN_FPS = 100;
 const int SCREEN_TICKS_PER_FRAME = 1000 / SCREEN_FPS;
 
@@ -24,26 +25,44 @@ Game::Game()
 	gameRenderer = SDL_CreateRenderer(gameWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 }
 
-void Game::Producer()
-{
-	while (true)
-	{
-		protoItem = new item;
-		
-	}
-}
-
-void Game::Consumer()
-{
-	while (true)
-	{
-		for (size_t i = 0; i < buffer.size(); i++)
-		{
-			std::cout << buffer.at(i) << ", ";
-		}
-		std::cout << std::endl;
-	}
-}
+//void Producer()
+//{
+//	while (true)
+//	{
+//		protoItem = item();
+//		
+//		P(empty);
+//
+//		P(muteP);
+//
+//		buffer.push_back(protoItem);
+//
+//		V(muteP);
+//
+//		V(full);
+//	}
+//}
+//
+//void Consumer()
+//{
+//	while (true)
+//	{
+//		protoItem = item();
+//		protoItem.id = 2;
+//
+//		P(full);
+//
+//		P(muteC);
+//
+//		buffer.push_back(protoItem);
+//
+//		V(muteC);
+//
+//		V(empty);
+//
+//		std::cout << std::endl;
+//	}
+//}
 
 Game::~Game()
 {
@@ -71,6 +90,10 @@ void Game::update()
 
 													//save the curent time for next frame
 	lastTime = currentTime;
+
+	//std::thread p1(this->Producer);
+	//std::thread c1(this->Consumer);
+
 }
 
 void Game::render()
