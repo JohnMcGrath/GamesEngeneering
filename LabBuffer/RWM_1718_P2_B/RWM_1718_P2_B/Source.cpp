@@ -1,6 +1,7 @@
 #include <iostream>
 using namespace std;
-#include "Game.h"
+#include <vector>
+#include <thread>
 
 struct item
 {

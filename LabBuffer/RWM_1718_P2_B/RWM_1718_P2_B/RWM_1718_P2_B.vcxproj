@@ -142,16 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="LTimer.cpp" />
     <ClCompile Include="Source.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BasicTypes.h" />
-    <ClInclude Include="EventListener.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="LTimer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

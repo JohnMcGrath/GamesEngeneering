@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
 	while (true)
 	{
-
+		//Keep the progrmamme running
 	}
 
 	return 0;
