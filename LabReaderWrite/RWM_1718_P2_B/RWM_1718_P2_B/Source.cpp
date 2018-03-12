@@ -1,18 +1,22 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <mutex>
 
 using namespace std;
 
 struct item
 {
-	//Random number in eachone
+	//Random number in each one
 	int id = rand() % 100;
 };
 
 std::vector<item> database;
 
 int numOfreaders = 0;
+
+std::mutex mutexR;
+std::mutex mutexW;
 
 int muteW = 1;
 int muteR = 1;
