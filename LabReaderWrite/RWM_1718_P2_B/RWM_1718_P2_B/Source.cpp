@@ -52,14 +52,13 @@ void Writer()
 
 		//Wait for access
 		//P(muteW);
-		mutexW.unlock();
+		mutexW.lock();
 
 		database.push_back(protoItem);
 		std::cout << "Wrote Item to Database" << std::endl;
 
 		//Close access
-		//V(muteW);
-		mutexW.lock();
+		mutexW.unlock();
 	}
 }
 
@@ -68,25 +67,25 @@ void Reader()
 	while (true)
 	{
 		//P(muteR);
-		mutexR.unlock();
-
+		mutexR.lock();
+		
 		numOfreaders++;
 
 		//Lock out writers if there's a reader
 		if (numOfreaders == 1)
 		{
-			mutexW.unlock();
+			mutexW.lock();
 			//P(muteW);
 		}
 		
 		//V(muteR);
-		mutexR.lock();
+		mutexR.unlock();
 
 		result = database.at(rand() % database.size()).id;
 		std::cout << "Reading Data Base: Id; " << result << std::endl;
 
 	    //P(muteR);
-		mutexR.unlock();
+		mutexR.lock();
 
 		numOfreaders--;
 
@@ -94,10 +93,10 @@ void Reader()
 		if (numOfreaders == 0)
 		{
 			//V(muteW);
-			mutexW.lock();
+			mutexW.unlock();
 		}
 		//V(muteR);
-		mutexR.lock();
+		mutexR.unlock();
 	}
 }
 
