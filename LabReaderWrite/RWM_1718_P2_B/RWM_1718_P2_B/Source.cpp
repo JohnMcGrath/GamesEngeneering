@@ -11,6 +11,31 @@ struct item
 	int id = rand() % 100;
 };
 
+class Semaphore
+{
+public:
+	void V()
+	{
+		std::unique_lock<decltype(m_mutex)> lock(m_mutex);
+		++m_count;
+		m_conditionVariable.notify_one();
+	}
+	void P()
+	{
+		std::unique_lock<decltype(m_mutex)> lock(m_mutex);
+		while (m_count <= 0)
+		{
+			m_conditionVariable.wait(lock);
+		}
+		--m_count;
+	}
+
+private:
+	int m_count = 1;
+	condition_variable m_conditionVariable;
+	std::mutex m_mutex;
+};
+
 std::vector<item> database;
 
 int numOfreaders = 0;
@@ -20,6 +45,9 @@ std::mutex mutexW;
 
 int muteW = 1;
 int muteR = 1;
+
+Semaphore r;
+Semaphore w;
 
 item protoItem;
 
@@ -43,19 +71,19 @@ void P(int & semaphore)
 	semaphore--;
 }
 
-void Vmutex(std::mutex & mutex)
-{
-	mutex.lock();
-}
-
-void Pmutex(std::mutex & mutex)
-{
-	while (numOfreaders < 0)
-	{
-		//wait
-	}
-	mutex.unlock();
-}
+//void Vmutex(std::mutex & mutex)
+//{
+//	mutex.lock();
+//}
+//
+//void Pmutex(std::mutex & mutex)
+//{
+//	while (numOfreaders < 0)
+//	{
+//		//wait
+//	}
+//	mutex.unlock();
+//}
 
 void Writer()
 {
