@@ -43,6 +43,20 @@ void P(int & semaphore)
 	semaphore--;
 }
 
+void Vmutex(std::mutex & mutex)
+{
+	mutex.lock();
+}
+
+void Pmutex(std::mutex & mutex)
+{
+	while (numOfreaders < 0)
+	{
+		//wait
+	}
+	mutex.unlock();
+}
+
 void Writer()
 {
 	while (true)
@@ -51,14 +65,19 @@ void Writer()
 		protoItem = item();
 
 		//Wait for access
-		//P(muteW);
-		mutexW.lock();
+		P(muteW); //Using int to represent semaphore
+		//mutexW.unlock(); //Convert to mutexs
+		//mutexW.lock(); //Flipped mutexs
+		//Pmutex(mutexW); //Attempting to convert P to use mutex
 
 		database.push_back(protoItem);
 		std::cout << "Wrote Item to Database" << std::endl;
 
 		//Close access
-		mutexW.unlock();
+		V(muteW);
+		//mutexW.lock();
+		//mutexW.unlock();
+		//Vmutex(mutexR);
 	}
 }
 
@@ -66,47 +85,72 @@ void Reader()
 {
 	while (true)
 	{
-		//P(muteR);
-		mutexR.lock();
+		P(muteR);
+		//mutexR.unlock();
+		//mutexR.lock();
+		//Pmutex(mutexR);
 		
 		numOfreaders++;
+		//numOfreaders--;
 
 		//Lock out writers if there's a reader
 		if (numOfreaders == 1)
 		{
-			mutexW.lock();
-			//P(muteW);
+			P(muteW);
+			//mutexW.unlock();
+			//mutexW.lock();
+			//Pmutex(mutexW);
 		}
 		
-		//V(muteR);
-		mutexR.unlock();
+		V(muteR);
+		//mutexR.lock();
+		//mutexR.unlock();
+		//Vmutex(mutexR);
 
-		result = database.at(rand() % database.size()).id;
-		std::cout << "Reading Data Base: Id; " << result << std::endl;
+		if (database.size() != 0)
+		{
+			result = database.at(rand() % database.size()).id;
+			std::cout << "Reading Data Base: Id; " << result << std::endl;
+		}
 
-	    //P(muteR);
-		mutexR.lock();
+		else
+		{
+			std::cout << "Database Empty" << std::endl;
+		}
+
+	    P(muteR);
+		//mutexR.unlock();
+		//mutexR.lock();
+		//Pmutex(mutexR);
 
 		numOfreaders--;
+		//numOfreaders++;
 
-		//if last, release
 		if (numOfreaders == 0)
 		{
-			//V(muteW);
-			mutexW.unlock();
+			V(muteW);
+			//mutexW.lock();
+			//mutexW.unlock();
+			//Vmutex(mutexW);
 		}
-		//V(muteR);
-		mutexR.unlock();
+		V(muteR);
+		//mutexR.lock();
+		//mutexR.unlock();
+		//Vmutex(mutexR);
 	}
 }
 
 int main(int argc, char *argv[])
 {
 	std::thread w(Writer);
+	//std::thread w2(Writer);
 	std::thread c(Reader);
+	//std::thread c2(Reader);
 
 	w.join();
 	c.join();
+	//w2.join();
+	//c2.join();
 
 	while (true)
 	{
