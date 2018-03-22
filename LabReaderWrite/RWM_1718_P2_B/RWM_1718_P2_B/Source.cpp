@@ -2,24 +2,31 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <time.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 using namespace std;
 
 struct item
 {
 	//Random number in each one
+	
 	int id = rand() % 100;
 };
 
 class Semaphore
 {
 public:
+
 	void V()
 	{
+		//Lock
 		std::unique_lock<decltype(m_mutex)> lock(m_mutex);
 		++m_count;
 		m_conditionVariable.notify_one();
 	}
+
 	void P()
 	{
 		std::unique_lock<decltype(m_mutex)> lock(m_mutex);
@@ -40,50 +47,19 @@ std::vector<item> database;
 
 int numOfreaders = 0;
 
-std::mutex mutexR;
-std::mutex mutexW;
-
 int muteW = 1;
 int muteR = 1;
 
 Semaphore r;
 Semaphore w;
 
+//Item used to create new ones
 item protoItem;
 
 int result;
 
 void Writer();
 void Reader();
-
-void V(int & semaphore)
-{
-	semaphore++;
-}
-
-void P(int & semaphore)
-{
-	while (semaphore <= 0)
-	{
-		//Waiting for access
-	}
-
-	semaphore--;
-}
-
-//void Vmutex(std::mutex & mutex)
-//{
-//	mutex.lock();
-//}
-//
-//void Pmutex(std::mutex & mutex)
-//{
-//	while (numOfreaders < 0)
-//	{
-//		//wait
-//	}
-//	mutex.unlock();
-//}
 
 void Writer()
 {
@@ -93,19 +69,17 @@ void Writer()
 		protoItem = item();
 
 		//Wait for access
-		P(muteW); //Using int to represent semaphore
-		//mutexW.unlock(); //Convert to mutexs
-		//mutexW.lock(); //Flipped mutexs
-		//Pmutex(mutexW); //Attempting to convert P to use mutex
+		w.P();
 
+		//Create an item and push to the database
 		database.push_back(protoItem);
 		std::cout << "Wrote Item to Database" << std::endl;
 
 		//Close access
-		V(muteW);
-		//mutexW.lock();
-		//mutexW.unlock();
-		//Vmutex(mutexR);
+		w.V();
+
+		//Wait for half a second
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
 
@@ -113,28 +87,21 @@ void Reader()
 {
 	while (true)
 	{
-		P(muteR);
-		//mutexR.unlock();
-		//mutexR.lock();
-		//Pmutex(mutexR);
+		//Release reader lock
+		r.P();
 		
+		//Increase the number of readers
 		numOfreaders++;
-		//numOfreaders--;
 
 		//Lock out writers if there's a reader
 		if (numOfreaders == 1)
 		{
-			P(muteW);
-			//mutexW.unlock();
-			//mutexW.lock();
-			//Pmutex(mutexW);
+			w.P();
 		}
-		
-		V(muteR);
-		//mutexR.lock();
-		//mutexR.unlock();
-		//Vmutex(mutexR);
 
+		r.V();
+
+		//Read a random database member
 		if (database.size() != 0)
 		{
 			result = database.at(rand() % database.size()).id;
@@ -146,40 +113,44 @@ void Reader()
 			std::cout << "Database Empty" << std::endl;
 		}
 
-	    P(muteR);
-		//mutexR.unlock();
-		//mutexR.lock();
-		//Pmutex(mutexR);
+		r.P();
 
 		numOfreaders--;
-		//numOfreaders++;
 
 		if (numOfreaders == 0)
 		{
-			V(muteW);
-			//mutexW.lock();
-			//mutexW.unlock();
-			//Vmutex(mutexW);
+			w.V();
 		}
-		V(muteR);
-		//mutexR.lock();
-		//mutexR.unlock();
-		//Vmutex(mutexR);
+
+		r.V();
+
+		//Wait for half a second
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
 
 int main(int argc, char *argv[])
 {
+	//Seed the random
+	srand(time(NULL));
+
 	std::thread w(Writer);
-	//std::thread w2(Writer);
+	std::thread w2(Writer);
+	std::thread w3(Writer);
+
+	std::thread c2(Reader);
 	std::thread c(Reader);
-	//std::thread c2(Reader);
+	std::thread c3(Reader);
 
 	w.join();
-	c.join();
-	//w2.join();
-	//c2.join();
+	w2.join();
+	w3.join();
 
+	c.join();
+	c2.join();
+	c3.join();
+
+	//Run indefinetly
 	while (true)
 	{
 		//Keep the progrmamme running
