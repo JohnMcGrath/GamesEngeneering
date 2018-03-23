@@ -21,7 +21,7 @@ public:
 
 	void V()
 	{
-		//Lock
+		//This lock must be aquired in order to wait on the condition variable
 		std::unique_lock<decltype(m_mutex)> lock(m_mutex);
 		++m_count;
 		m_conditionVariable.notify_one();
@@ -29,6 +29,7 @@ public:
 
 	void P()
 	{
+		//This lock must be aquired in order to wait on the condition variable
 		std::unique_lock<decltype(m_mutex)> lock(m_mutex);
 		while (m_count <= 0)
 		{
@@ -39,7 +40,10 @@ public:
 
 private:
 	int m_count = 1;
+
+	//Used to block multiple threads until notified
 	condition_variable m_conditionVariable;
+
 	std::mutex m_mutex;
 };
 
@@ -50,7 +54,10 @@ int numOfreaders = 0;
 int muteW = 1;
 int muteR = 1;
 
+//Reader
 Semaphore r;
+
+//Writer
 Semaphore w;
 
 //Item used to create new ones
@@ -68,14 +75,14 @@ void Writer()
 		//Create Item
 		protoItem = item();
 
-		//Wait for access
+		//Grab the lock
 		w.P();
 
 		//Create an item and push to the database
 		database.push_back(protoItem);
-		std::cout << "Wrote Item to Database" << std::endl;
+		std::cout << "Wrote Item to Database; Size: " << database.size() << std::endl;
 
-		//Close access
+		//Release the lock
 		w.V();
 
 		//Wait for half a second
@@ -87,7 +94,7 @@ void Reader()
 {
 	while (true)
 	{
-		//Release reader lock
+		//Grabs reader lock
 		r.P();
 		
 		//Increase the number of readers
@@ -96,16 +103,17 @@ void Reader()
 		//Lock out writers if there's a reader
 		if (numOfreaders == 1)
 		{
+			//Grab the writer lock
 			w.P();
 		}
 
+		//Releases Reader Lock
 		r.V();
 
 		//Read a random database member
 		if (database.size() != 0)
 		{
-			result = database.at(rand() % database.size()).id;
-			std::cout << "Reading Data Base: Id; " << result << std::endl;
+			std::cout << "Reading Random Database Entry" << std::endl;
 		}
 
 		else
@@ -113,15 +121,20 @@ void Reader()
 			std::cout << "Database Empty" << std::endl;
 		}
 
+		//Grab the reader lock
+		//Locking while we check the current amount of readers
 		r.P();
 
 		numOfreaders--;
 
+		//If there are no readers
 		if (numOfreaders == 0)
 		{
+			//Release the writer lock
 			w.V();
 		}
 
+		//Grab lock
 		r.V();
 
 		//Wait for half a second
@@ -131,9 +144,6 @@ void Reader()
 
 int main(int argc, char *argv[])
 {
-	//Seed the random
-	srand(time(NULL));
-
 	std::thread w(Writer);
 	std::thread w2(Writer);
 	std::thread w3(Writer);
@@ -150,7 +160,6 @@ int main(int argc, char *argv[])
 	c2.join();
 	c3.join();
 
-	//Run indefinetly
 	while (true)
 	{
 		//Keep the progrmamme running
